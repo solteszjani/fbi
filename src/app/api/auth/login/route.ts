@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { createSession, verifyPassword } from "@/lib/auth";
+export async function POST(req:Request){try{const {username,password}=await req.json();if(typeof username!=="string"||typeof password!=="string")return NextResponse.json({error:"Add meg a felhasználónevet és jelszót."},{status:400});const user=await prisma.user.findUnique({where:{username:username.trim().toLowerCase()}});if(!user||!user.active||!verifyPassword(password,user.passwordSalt,user.passwordHash))return NextResponse.json({error:"Hibás felhasználónév vagy jelszó."},{status:401});await createSession({id:user.id,username:user.username,role:user.role});await prisma.user.update({where:{id:user.id},data:{lastLoginAt:new Date()}});return NextResponse.json({ok:true});}catch{return NextResponse.json({error:"Bejelentkezési hiba."},{status:500})}}

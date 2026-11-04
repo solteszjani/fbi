@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole { SUPERADMIN ADMIN SUPERVISOR AGENT VIEWER }
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  displayName  String
+  passwordHash String
+  passwordSalt String
+  role         UserRole @default(AGENT)
+  permissions  Json     @default("[]")
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lastLoginAt  DateTime?
+}
+
+enum CaseStatus { OPEN ACTIVE REVIEW CLOSED }
+enum CasePriority { LOW NORMAL HIGH CRITICAL }
+enum ReportType { INVESTIGATION INTERVIEW SURVEILLANCE INCIDENT EVIDENCE OPERATION }
+enum EvidenceStatus { COLLECTED STORED RELEASED }
+enum OperationStatus { PLANNING APPROVED ACTIVE COMPLETE ABORTED }
+
+model Agent {
+  id           String   @id @default(cuid())
+  badgeNumber  String   @unique
+  name         String
+  rank          String
+  division      String
+  email         String?  @unique
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  cases         Case[]   @relation("CaseLead")
+  reports       Report[]
+  auditEvents   AuditEvent[]
+}
+
+model Case {
+  id           String       @id @default(cuid())
+  caseNumber   String       @unique
+  title        String
+  summary      String       @db.Text
+  status       CaseStatus   @default(OPEN)
+  priority     CasePriority @default(NORMAL)
+  division     String
+  leadAgentId  String?
+  leadAgent    Agent?       @relation("CaseLead", fields: [leadAgentId], references: [id])
+  subjects     Subject[]
+  evidence     Evidence[]
+  reports      Report[]
+  operations   Operation[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Subject {
+  id              String   @id @default(cuid())
+  fullName        String
+  dateOfBirth     String?
+  alias           String?
+  phone           String?
+  address         String?
+  notes           String?  @db.Text
+  wanted          Boolean  @default(false)
+  riskLevel       String   @default("LOW")
+  caseId          String?
+  case            Case?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+}
+
+model Evidence {
+  id             String         @id @default(cuid())
+  evidenceNumber String         @unique
+  title          String
+  category       String
+  description    String         @db.Text
+  collectedBy    String
+  collectedAt    DateTime       @default(now())
+  location       String?
+  status         EvidenceStatus  @default(COLLECTED)
+  caseId         String?
+  case           Case?           @relation(fields: [caseId], references: [id], onDelete: SetNull)
+}
+
+model Report {
+  id          String     @id @default(cuid())
+  reportNumber String    @unique
+  type        ReportType
+  title       String
+  body        String     @db.Text
+  authorId    String?
+  author      Agent?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  caseId      String?
+  case        Case?      @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  createdAt   DateTime   @default(now())
+}
+
+model Operation {
+  id          String          @id @default(cuid())
+  operationCode String        @unique
+  name        String
+  objective   String          @db.Text
+  status      OperationStatus @default(PLANNING)
+  classification String       @default("CONFIDENTIAL")
+  startAt     DateTime?
+  location    String?
+  caseId      String?
+  case        Case?           @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  createdAt   DateTime        @default(now())
+}
+
+model AuditEvent {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     Agent?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  details   String?  @db.Text
+  createdAt DateTime @default(now())
+}
