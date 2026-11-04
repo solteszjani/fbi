@@ -19,7 +19,11 @@ function dataFor(module: string, input: any) {
   const item = config[module];
   if (!item) throw new Error("Ismeretlen modul.");
   const data: Record<string, unknown> = {};
-  for (const field of item.fields) if (input?.[field] !== undefined) data[field] = input[field];
+  for (const field of item.fields) if (input?.[field] !== undefined) {
+    const value = input[field];
+    // Convert empty optional values to null so Prisma accepts nullable fields.
+    data[field] = value === "" ? null : value;
+  }
   for (const field of item.required) {
     if (data[field] === undefined || data[field] === null || data[field] === "") throw new Error(`Kötelező mező: ${field}`);
   }
