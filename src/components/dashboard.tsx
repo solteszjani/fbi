@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";\nimport RecordsModule from "@/components/records-module";
+import { useMemo, useState } from "react";
+import RecordsModule from "@/components/records-module";
 import {
   Activity, AlertTriangle, Archive, ArrowUpRight, BadgeCheck, Bell, BookOpen,
   BriefcaseBusiness, Building2, CalendarClock, Camera, ChevronDown, ClipboardList,
