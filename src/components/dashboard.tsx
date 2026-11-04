@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";\nimport RecordsModule from "@/components/records-module";
 import {
   Activity, AlertTriangle, Archive, ArrowUpRight, BadgeCheck, Bell, BookOpen,
   BriefcaseBusiness, Building2, CalendarClock, Camera, ChevronDown, ClipboardList,
@@ -145,19 +145,18 @@ export default function Dashboard() {
             <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
               {[["Új jelentés", ClipboardList, "Jelentés készítése"], ["Személy keresése", UserRound, "Adatbázis megnyitása"], ["Művelet tervezése", ShieldAlert, "Operatív tervező"], ["Bizonyíték rögzítése", Archive, "Bizonyítéktár"]].map(([label, Icon, sub]) => <button key={String(label)} onClick={() => setActive(String(label) === "Új jelentés" ? "Jelentések" : String(label) === "Személy keresése" ? "Személyi adatbázis" : String(label) === "Művelet tervezése" ? "Műveletek" : "Bizonyítéktár")} className="flex items-center gap-3 rounded-xl border border-white/[.07] bg-[#0d1521] p-3 text-left transition hover:border-blue-400/20 hover:bg-blue-500/[.04]"><div className="rounded-lg bg-slate-800/70 p-2 text-blue-300"><Icon size={16}/></div><div><div className="text-[11px] font-semibold">{String(label)}</div><div className="mt-1 text-[9px] text-slate-500">{String(sub)}</div></div></button>)}
             </div>
-          </> : <section className="rounded-xl border border-white/[.07] bg-[#0d1521] p-5 sm:p-7">
-            <div className="mb-3 flex items-center gap-2"><Badge tone="blue">FBI OPERATIONS</Badge><Badge>MODULE</Badge></div>
-            <h1 className="text-2xl font-semibold">{active}<span className="text-blue-400">.</span></h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">{navNotes[active] || "FBI frakciós modul."}</p>
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {[
-                ["Modul áttekintése", "A modul funkciói és legfontosabb adatai.", BookOpen],
-                ["Nyilvántartás", "Keresés, szűrés és rekordok kezelése.", Search],
-                ["Új rekord", "Új elem létrehozása és adatainak rögzítése.", Plus]
-              ].map(([t, d, Icon]) => <div key={String(t)} className="rounded-xl border border-white/[.06] bg-[#101b2a] p-4"><Icon size={18} className="mb-3 text-blue-300"/><div className="text-sm font-semibold">{String(t)}</div><p className="mt-2 text-xs leading-5 text-slate-500">{String(d)}</p></div>)}
-            </div>
-            <div className="mt-6 rounded-lg border border-amber-500/15 bg-amber-500/[.04] p-4 text-xs leading-5 text-amber-200/80"><AlertTriangle size={15} className="mr-2 inline"/>Ez a letölthető kiadás UI-prototípus: a menük és a dashboard működnek, az új ügy hozzáadása jelenleg böngészőállapotban történik. A tartós Neon-adatbázis műveletekhez a következő fejlesztési lépés az API-route-ok, autentikáció és jogosultságkezelés bekötése.</div>
-          </section>}
+          </> : <RecordsModule module={{
+            "Nyomozati ügyek":"cases",
+            "Személyi adatbázis":"subjects",
+            "Járműnyilvántartás":"vehicles",
+            "Bizonyítéktár":"evidence",
+            "Jelentések":"reports",
+            "Műveletek":"operations",
+            "Fedőazonosságok":"aliases",
+            "Megfigyelés / CCTV":"cameras",
+            "Ügynökök":"agents",
+            "Osztályok és rangok":"divisions"
+          }[active] || "unsupported"} />}
         </div>
       </main>
     </div>
