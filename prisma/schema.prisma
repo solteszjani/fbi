@@ -92,6 +92,7 @@ model Case {
   leadAgent    Agent?       @relation("CaseLead", fields: [leadAgentId], references: [id])
   subjects     Subject[]
   evidence     Evidence[]
+  vehicles     Vehicle[]
   reports      Report[]
   operations   Operation[]
   createdAt    DateTime     @default(now())
