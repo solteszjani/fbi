@@ -7,7 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole { SUPERADMIN ADMIN SUPERVISOR AGENT VIEWER }
+enum UserRole {
+  SUPERADMIN
+  ADMIN
+  SUPERVISOR
+  AGENT
+  VIEWER
+}
 
 model User {
   id           String   @id @default(cuid())
@@ -23,11 +29,42 @@ model User {
   lastLoginAt  DateTime?
 }
 
-enum CaseStatus { OPEN ACTIVE REVIEW CLOSED }
-enum CasePriority { LOW NORMAL HIGH CRITICAL }
-enum ReportType { INVESTIGATION INTERVIEW SURVEILLANCE INCIDENT EVIDENCE OPERATION }
-enum EvidenceStatus { COLLECTED STORED RELEASED }
-enum OperationStatus { PLANNING APPROVED ACTIVE COMPLETE ABORTED }
+enum CaseStatus {
+  OPEN
+  ACTIVE
+  REVIEW
+  CLOSED
+}
+
+enum CasePriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum ReportType {
+  INVESTIGATION
+  INTERVIEW
+  SURVEILLANCE
+  INCIDENT
+  EVIDENCE
+  OPERATION
+}
+
+enum EvidenceStatus {
+  COLLECTED
+  STORED
+  RELEASED
+}
+
+enum OperationStatus {
+  PLANNING
+  APPROVED
+  ACTIVE
+  COMPLETE
+  ABORTED
+}
 
 model Agent {
   id           String   @id @default(cuid())
