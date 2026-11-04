@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import RecordsModule from "@/components/records-module";
+import SettingsModule from "@/components/settings-module";
+import AuditModule from "@/components/audit-module";
 import {
   Activity, AlertTriangle, Archive, ArrowUpRight, BadgeCheck, Bell, BookOpen,
   BriefcaseBusiness, Building2, CalendarClock, Camera, ChevronDown, ClipboardList,
@@ -146,7 +148,7 @@ export default function Dashboard() {
             <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
               {[["Új jelentés", ClipboardList, "Jelentés készítése"], ["Személy keresése", UserRound, "Adatbázis megnyitása"], ["Művelet tervezése", ShieldAlert, "Operatív tervező"], ["Bizonyíték rögzítése", Archive, "Bizonyítéktár"]].map(([label, Icon, sub]) => <button key={String(label)} onClick={() => setActive(String(label) === "Új jelentés" ? "Jelentések" : String(label) === "Személy keresése" ? "Személyi adatbázis" : String(label) === "Művelet tervezése" ? "Műveletek" : "Bizonyítéktár")} className="flex items-center gap-3 rounded-xl border border-white/[.07] bg-[#0d1521] p-3 text-left transition hover:border-blue-400/20 hover:bg-blue-500/[.04]"><div className="rounded-lg bg-slate-800/70 p-2 text-blue-300"><Icon size={16}/></div><div><div className="text-[11px] font-semibold">{String(label)}</div><div className="mt-1 text-[9px] text-slate-500">{String(sub)}</div></div></button>)}
             </div>
-          </> : <RecordsModule module={{
+          </> : active === "Beállítások" ? <SettingsModule /> : active === "Audit napló" ? <AuditModule /> : <RecordsModule module={{
             "Nyomozati ügyek":"cases",
             "Személyi adatbázis":"subjects",
             "Járműnyilvántartás":"vehicles",
